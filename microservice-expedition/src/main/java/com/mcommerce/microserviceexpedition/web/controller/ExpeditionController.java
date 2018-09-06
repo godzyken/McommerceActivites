@@ -2,43 +2,59 @@ package com.mcommerce.microserviceexpedition.web.controller;
 
 import com.mcommerce.microserviceexpedition.dao.ExpeditionDao;
 import com.mcommerce.microserviceexpedition.model.Expedition;
-import com.mcommerce.microserviceexpedition.web.exceptions.*;
+import com.mcommerce.microserviceexpedition.web.exceptions.ExpeditionNotFoundException;
+import com.mcommerce.microserviceexpedition.web.exceptions.ImpossibleAjouterExpeditionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
 public class ExpeditionController {
 
     @Autowired
-    ExpeditionDao expeditionDao;
+    private ExpeditionDao expeditionDao;
 
-    @PostMapping(value = "/expeditions")
-  public ResponseEntity<Expedition> ajouterUneExpedition(@RequestBody Expedition expedition){
+  @PutMapping(value="/Expedition/{id}")
+  public Expedition modifierExpedition(@RequestBody Expedition expedition) {
 
-      Expedition nouvelleExpedition = expeditionDao.save(expedition);
+    Expedition expeditionModifiee = expeditionDao.save(expedition);
+    if (expeditionModifiee == null) throw new ImpossibleAjouterExpeditionException( "Impossible de modifier l'expedition");
+    return expeditionModifiee;
+  }
 
-      if(nouvelleExpedition == null) throw new ImpossibleAjouterCommandeException("Impossible d'ajouter cette commande");
+  @PostMapping(value="/Expedition")
+  public ResponseEntity<Expedition> ajouterUneExpedition(@RequestBody Expedition expedition) {
+    Expedition nouvelleExpedition = expeditionDao.save(expedition);
 
-      return new ResponseEntity<Expedition>(expedition, HttpStatus.CREATED);
+    if (nouvelleExpedition == null) {
+      throw new ImpossibleAjouterExpeditionException("Impossible d'ajouter une nouvelle expedition");
     }
 
-    @GetMapping(value = "/expeditions/{id}")
-  public Optional<Expedition> recupererUneExpedition(@PathVariable int id){
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+            .buildAndExpand(nouvelleExpedition.getId()).toUri();
+    ResponseEntity<Expedition> epeditionAjout = ResponseEntity.created(location).build();
+    return epeditionAjout;
+  }
 
-      Optional<Expedition> expedition = expeditionDao.findById(id);
 
-      if(!expedition.isPresent()) throw new ExpeditionNotFoundException("Cette expedition n'existe pas");
+  @GetMapping(value="/Expedition/{id}")
+  public Expedition afficherUneExpedition(@PathVariable int id) {
+    Optional<Expedition> expedition = expeditionDao.findById(id);
+    if (!expedition.isPresent()) throw new ExpeditionNotFoundException("Cette expédition n'existe pas");
+    return expedition.get();
+  }
 
-      return expedition;
-    }
+  @GetMapping(value = "/suivi/{idCommande}")
+  public Optional<Expedition> etatExpedition(@PathVariable int idCommande) {
 
-    @PutMapping(value = "/expeditions")
-  public void updateExpedition(@RequestBody Expedition expedition){
+    Optional<Expedition> expedition = expeditionDao.findByIdCommandeLike(idCommande);
 
-      expeditionDao.save(expedition);
-    }
+    if (!expedition.isPresent()) throw new ExpeditionNotFoundException("Cette expedition n'existe pas");
+
+    else return expedition;
+  }
 }

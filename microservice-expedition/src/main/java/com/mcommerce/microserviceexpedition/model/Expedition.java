@@ -1,13 +1,29 @@
 package com.mcommerce.microserviceexpedition.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Expedition {
+
+    @Id
+    @GeneratedValue
     private Integer id;
 
+    @Column
     private Integer idCommande;
 
     private Integer etat;
 
     public Expedition() {
+    }
+
+    public Expedition(Integer id, Integer idCommande, Integer etat) {
+        this.id = id;
+        this.idCommande = idCommande;
+        this.etat = etat;
     }
 
     public Integer getId() {

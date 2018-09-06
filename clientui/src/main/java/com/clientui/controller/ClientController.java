@@ -1,9 +1,11 @@
 package com.clientui.controller;
 
 import com.clientui.beans.CommandeBean;
+import com.clientui.beans.ExpeditionBean;
 import com.clientui.beans.PaiementBean;
 import com.clientui.beans.ProductBean;
 import com.clientui.proxies.MicroserviceCommandeProxy;
+import com.clientui.proxies.MicroserviceExpeditionProxy;
 import com.clientui.proxies.MicroservicePaiementProxy;
 import com.clientui.proxies.MicroserviceProduitsProxy;
 import org.slf4j.Logger;
@@ -15,10 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -33,6 +35,9 @@ public class ClientController {
 
     @Autowired
     private MicroservicePaiementProxy paiementProxy;
+
+    @Autowired
+    private MicroserviceExpeditionProxy expeditionProxy;
 
 
     Logger log = LoggerFactory.getLogger(this.getClass());
@@ -119,6 +124,12 @@ public class ClientController {
         if(paiement.getStatusCode() == HttpStatus.CREATED)
                 paiementAccepte = true;
 
+        ExpeditionBean expeditionBean = new ExpeditionBean();
+        expeditionBean.setId(0);
+        expeditionBean.setIdCommande(idCommande);
+        expeditionBean.setEtat(0);
+        expeditionProxy.ajouterExpedition(expeditionBean);
+
         model.addAttribute("paiementOk", paiementAccepte); // on envoi un Boolean paiementOk à la vue
 
         return "confirmation";
@@ -129,4 +140,22 @@ public class ClientController {
 
         return ThreadLocalRandom.current().nextLong(1000000000000000L,9000000000000000L );
     }
+  /**
+   * Etape (6)
+   * Opération qui recupere l'etat de l'expedition pour le suivie de commande
+   */
+  @RequestMapping(value = "/suivi/{idCommande}")
+  public String suivreUneExpedition(@PathVariable int idCommande, Model model){
+
+    Optional<ExpeditionBean> expeditionASuivre = expeditionProxy.etatExpedition(idCommande);
+
+    ExpeditionBean prodAsuivre = expeditionASuivre.get();
+
+    CommandeBean commande = CommandesProxy.recupererUneCommande(idCommande);
+
+    model.addAttribute("produitSuivie", prodAsuivre);
+    model.addAttribute("commande", commande);
+
+    return "Expedition";
+  }
 }

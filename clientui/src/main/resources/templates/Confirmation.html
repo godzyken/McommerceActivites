@@ -19,6 +19,9 @@
 
             <p th:if="${paiementOk}" >
                 Paiement Accepté
+            <a th:href="@{|/suivi/${idCommande}|}" class="font-weight-bold">Suivre ma commande <br></a>
+            <br>
+            <a th:href="@{|/|}" class="font-weight-bold">retour a l'accueil<br></a>
             </p>
 
             <p th:unless="${paiementOk}">
