@@ -36,8 +36,8 @@ public class ExpeditionController {
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
             .buildAndExpand(nouvelleExpedition.getId()).toUri();
-    ResponseEntity<Expedition> epeditionAjout = ResponseEntity.created(location).build();
-    return epeditionAjout;
+    ResponseEntity<Expedition> expeditionAjout = ResponseEntity.created(location).build();
+    return expeditionAjout;
   }
 
 
