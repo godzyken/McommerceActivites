@@ -17,6 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -28,7 +30,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ClientController {
 
     @Autowired
-    private MicroserviceProduitsProxy ProduitsProxy;
+    private MicroserviceProduitsProxy produitsProxy;
 
     @Autowired
     private MicroserviceCommandeProxy CommandesProxy;
@@ -45,7 +47,7 @@ public class ClientController {
     /*
     * Étape (1)
     * Opération qui récupère la liste des produits et on les affichent dans la page d'accueil.
-    * Les produits sont récupérés grâce à ProduitsProxy
+    * Les produits sont récupérés grâce à produitsProxy
     * On fini par rentourner la page Accueil.html à laquelle on passe la liste d'objets "produits" récupérés.
     * */
     @RequestMapping("/")
@@ -54,7 +56,7 @@ public class ClientController {
 
         log.info("Envoi requête vers microservice-produits");
 
-        List<ProductBean> produits =  ProduitsProxy.listeDesProduits();
+        List<ProductBean> produits =  produitsProxy.listeDesProduits();
 
         model.addAttribute("produits", produits);
 
@@ -70,7 +72,7 @@ public class ClientController {
     @RequestMapping("/details-produit/{id}")
     public String ficheProduit(@PathVariable int id,  Model model){
 
-        ProductBean produit = ProduitsProxy.recupererUnProduit(id);
+        ProductBean produit = produitsProxy.recupererUnProduit(id);
 
         model.addAttribute("produit", produit);
 
@@ -121,8 +123,9 @@ public class ClientController {
 
         Boolean paiementAccepte = false;
         //si le code est autre que 201 CREATED, c'est que le paiement n'a pas pu aboutir.
-        if(paiement.getStatusCode() == HttpStatus.CREATED)
-                paiementAccepte = true;
+        if(paiement.getStatusCode() == HttpStatus.CREATED) {
+            paiementAccepte = true;
+        }
 
         ExpeditionBean expeditionBean = new ExpeditionBean();
         expeditionBean.setId(0);
@@ -132,7 +135,7 @@ public class ClientController {
 
         model.addAttribute("paiementOk", paiementAccepte); // on envoi un Boolean paiementOk à la vue
 
-        return "confirmation";
+        return "Confirmation";
     }
 
     //Génére une serie de 16 chiffres au hasard pour simuler vaguement une CB
@@ -149,11 +152,11 @@ public class ClientController {
 
     Optional<ExpeditionBean> expeditionASuivre = expeditionProxy.etatExpedition(idCommande);
 
-    ExpeditionBean prodAsuivre = expeditionASuivre.get();
+    ExpeditionBean commandeAsuivre = expeditionASuivre.get();
 
     CommandeBean commande = CommandesProxy.recupererUneCommande(idCommande);
 
-    model.addAttribute("produitSuivie", prodAsuivre);
+    model.addAttribute("commadeSuivie", commandeAsuivre);
     model.addAttribute("commande", commande);
 
     return "Expedition";
