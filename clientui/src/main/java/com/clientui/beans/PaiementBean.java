@@ -5,7 +5,7 @@ public class PaiementBean {
 
     private int id;
 
-    private Integer idCommande;
+    private int idCommande;
 
     private Double montant;
 
@@ -22,11 +22,11 @@ public class PaiementBean {
         this.id = id;
     }
 
-    public Integer getIdCommande() {
+    public int getIdCommande() {
         return idCommande;
     }
 
-    public void setIdCommande(Integer idCommande) {
+    public void setIdCommande(int idCommande) {
         this.idCommande = idCommande;
     }
 
