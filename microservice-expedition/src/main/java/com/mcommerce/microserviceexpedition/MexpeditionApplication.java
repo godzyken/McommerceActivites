@@ -8,9 +8,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableFeignClients("com.mexpedition")
 @EnableDiscoveryClient
-public class MicroserviceExpeditionApplication {
+public class MexpeditionApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MicroserviceExpeditionApplication.class, args);
+		SpringApplication.run(MexpeditionApplication.class, args);
 	}
 }
