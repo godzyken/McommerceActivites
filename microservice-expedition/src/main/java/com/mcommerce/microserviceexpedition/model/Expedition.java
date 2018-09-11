@@ -10,43 +10,45 @@ public class Expedition {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private int id;
 
-    @Column
-    private Integer idCommande;
+    @Column(unique = true)
+    private int idCommande;
 
-    private Integer etat;
+    private int etat;
 
     public Expedition() {
+        super();
     }
 
-    public Expedition(Integer id, Integer idCommande, Integer etat) {
+    public Expedition(int id, int idCommande, int etat) {
+        super();
         this.id = id;
         this.idCommande = idCommande;
         this.etat = etat;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public Integer getIdCommande() {
+    public int getIdCommande() {
         return idCommande;
     }
 
-    public void setIdCommande(Integer idCommande) {
+    public void setIdCommande(int idCommande) {
         this.idCommande = idCommande;
     }
 
-    public Integer getEtat() {
+    public int getEtat() {
         return etat;
     }
 
-    public void setEtat(Integer etat) {
+    public void setEtat(int etat) {
         this.etat = etat;
     }
 
