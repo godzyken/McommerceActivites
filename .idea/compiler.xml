@@ -10,7 +10,7 @@
         <module name="config-server" />
         <module name="eureka-server" />
         <module name="mcommandes" />
-        <module name="microservice-expedition" />
+        <module name="mexpedition" />
         <module name="mpaiement" />
         <module name="mproduits" />
         <module name="springadmin" />
@@ -22,7 +22,7 @@
       <module name="config-server" target="1.8" />
       <module name="eureka-server" target="1.8" />
       <module name="mcommandes" target="1.8" />
-      <module name="microservice-expedition" target="1.8" />
+      <module name="mexpedition" target="1.8" />
       <module name="microservice-suivi" target="1.8" />
       <module name="mpaiement" target="1.8" />
       <module name="mproduits" target="1.8" />
