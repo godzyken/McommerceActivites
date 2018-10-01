@@ -5,10 +5,7 @@ import com.clientui.beans.ExpeditionBean;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -16,9 +13,15 @@ import java.util.Optional;
 @RibbonClient(name = "microservice-expedition")
 public interface MicroserviceExpeditionProxy {
 
+  @GetMapping(value = "/microservice-expedition/Expeditions/{id}")
+  ExpeditionBean afficherUneExpedition(@PathVariable("id") int id);
+
+  @PutMapping(value="/microservice-expedition/Expeditions")
+  ExpeditionBean modifierExpedition(@RequestBody ExpeditionBean expeditionUpD);
+
   @PostMapping(value = "/Microservice-expedition/expeditions")
   ResponseEntity<ExpeditionBean> ajouterExpedition(@RequestBody ExpeditionBean expeditionBean);
 
   @GetMapping(value = "/Microservice-expedition/suivi/{idCommande}")
-  public Optional<ExpeditionBean> etatExpedition(@PathVariable("idCommande") int idCommande);
+  Optional<ExpeditionBean> etatExpedition(@PathVariable("idCommande") int idCommande);
 }
