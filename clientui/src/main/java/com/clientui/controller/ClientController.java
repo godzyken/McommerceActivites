@@ -17,8 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
 
 
 import java.util.Date;
@@ -33,7 +31,7 @@ public class ClientController {
   private MicroserviceProduitsProxy produitsProxy;
 
   @Autowired
-  private MicroserviceCommandeProxy CommandesProxy;
+  private MicroserviceCommandeProxy commandeProxy;
 
   @Autowired
   private MicroservicePaiementProxy paiementProxy;
@@ -96,7 +94,7 @@ public class ClientController {
 
     // appel du microservice commandes grâce à Feign et on récupère en retour les détails de la
     // commande créée, notamment son ID (étape 4).
-    CommandeBean commandeAjoutee = CommandesProxy.ajouterCommande(commande);
+    CommandeBean commandeAjoutee = commandeProxy.ajouterCommande(commande);
 
     // on passe à la vue l'objet commande et le montant de celle-ci afin d'avoir les informations
     // nécessaire pour le paiement
@@ -162,13 +160,14 @@ public class ClientController {
 
     ExpeditionBean commandeAsuivre = expeditionASuivre.get();
 
-    CommandeBean commande = CommandesProxy.recupererUneCommande(idCommande);
+    CommandeBean commande = commandeProxy.recupererUneCommande(idCommande);
 
     ProductBean produit = produitsProxy.recupererUnProduit(commande.getProductId());
 
+    model.addAttribute("expeditionSuivie", expeditionASuivre);
     model.addAttribute("commadeSuivie", commandeAsuivre);
     model.addAttribute("commande", commande);
-    model.addAttribute("products", produit);+
+    model.addAttribute("products", produit);
 
     return "Expedition";
   }
